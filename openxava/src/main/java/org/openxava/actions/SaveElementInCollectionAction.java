@@ -27,6 +27,7 @@ public class SaveElementInCollectionAction extends CollectionElementViewBaseActi
 	private boolean containerSaved = false;
 	
 	public void execute() throws Exception {
+		System.out.println("In here++++++++++++++++++++++++");
 		Map containerKey = saveIfNotExists(getCollectionElementView().getParent());
 		if (XavaPreferences.getInstance().isMapFacadeAutoCommit()) {
 			getView().setKeyEditable(false); // To mark as saved
@@ -94,19 +95,23 @@ public class SaveElementInCollectionAction extends CollectionElementViewBaseActi
 	 * @return The saved object 
 	 */
 	protected Map saveIfNotExists(View view) throws Exception {
+		
 		if (getView() == view) {
 			if (view.isKeyEditable()) {
+			
 				Map key = MapFacade.createNotValidatingCollections(getModelName(), view.getValues());
 				addMessage("entity_created", getModelName());
 				view.addValues(key);
 				containerSaved=true;				
 				return key;								
 			}			
-			else {										
+			else {
+				System.out.println("222222222222222222222222");
 				return view.getKeyValues();									
 			}
 		}			
 		else {
+			
 			if (isKeyIncomplete(view)) { 
 				Map parentKey = saveIfNotExists(view.getParent());
 				Map key = Collections.EMPTY_MAP; 
