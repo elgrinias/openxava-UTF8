@@ -45,6 +45,7 @@ public class SaveElementInCollectionAction extends CollectionElementViewBaseActi
 	
 	
 	protected Map getValuesToSave() throws Exception {
+		System.out.println("Role:"+getCollectionElementView().getMetaModel().getMetaReferences());
 		return getCollectionElementView().getValues();		
 	}
 		
@@ -58,17 +59,20 @@ public class SaveElementInCollectionAction extends CollectionElementViewBaseActi
 		if (getCollectionElementView().isEditable()) {
 			// Aggregate or entity reference used as aggregate
 			boolean isEntity = isEntityReferencesCollection();
-			Map values = getValuesToSave();			
+			Map values = getValuesToSave();		
+			System.out.println("if"+getCollectionElementView().getMetaModel().getMembersNames().toString());
 			
 			try {
 				MapFacade.setValues(getCollectionElementView().getModelName(), getCollectionElementView().getKeyValues(), values);
 				addMessage(isEntity?"entity_modified":"aggregate_modified", getCollectionElementView().getModelName());
 			}
 			catch (ObjectNotFoundException ex) {
+					System.out.println(containerKey.toString());
 				create(values, isEntity, containerKey);
 			}		
 		}
 		else {
+			System.out.println("Else");
 			// Entity reference used in the standard way
 			validateMaximum(1); 
 			associateEntity(getCollectionElementView().getKeyValues());
@@ -79,6 +83,7 @@ public class SaveElementInCollectionAction extends CollectionElementViewBaseActi
 	protected void create(Map values, boolean isEntity, Map containerKey) throws CreateException { 
 		validateMaximum(1);
 		String modelName = isEntity?getCollectionElementView().getParent().getModelName() + "." + getCollectionElementView().getModelName():getCollectionElementView().getModelName();
+		System.out.println(isEntity+" "+modelName+" "+values.values().toString()+" "+getMetaCollection().getName());
 		MapFacade.createAggregate(modelName, containerKey, getMetaCollection().getName(), values);
 		addMessage(isEntity?"entity_created_and_associated":"aggregate_created", getCollectionElementView().getModelName(), getCollectionElementView().getParent().getModelName());
 	}
